@@ -16,7 +16,7 @@ from sklearn.cluster import KMeans
 from sklearn.decomposition import PCA
 import pickle
 
-from variables import df
+from functions import *
 
 import warnings
 warnings.filterwarnings("ignore")
@@ -697,4 +697,88 @@ def clustering():
 
     st.write('Con esto hemos terminado el clustering para sistema de recomendación, ahora vamos a pasar a la fase de generativas.')
 
+
+def generativas(api_key):
+
+    st.header('Generación de imágenes personalizadas.')
+
+    st.write('Imagina que eres ahora un vendedor dentro de la plataforma de e-commerce pero aún no tenemos imágenes de los productos. \
+                ¿Cómo podemos generar imágenes personalizadas para los productos que queremos vender? \
+                 Vamos a utilizar la red neuronal generativa DALL-E para generar imágenes personalizadas y así\
+                poder saber cómo se verían los productos que queremos vender dentro de la plataforma.')
+    
+    st.image('img/data_science_26.png', caption='DALL-E 3 - OpenAI')
+
+    st.subheader('¿Cómo se verá tu producto?')
+
+    corto_de_tiempo = st.checkbox('Estoy corto de tiempo', value=False)
+
+    if not corto_de_tiempo:
+
+        sugerencia = st.checkbox('Sugerir categorías de productos', value=True)
+
+        if sugerencia:
+
+            categoria_selector = st.selectbox('Categorías sugeridas:', options=['Moda', 'Deporte', 'Hogar', 'Electrónica', 'Libros'])
+
+            # Introducir una descripción del producto para generar una imagen
+
+            st.write('Introduce una descripción del producto que quieres generar.')
+
+            descripcion_producto = st.text_input('Descripción del producto')
+
+            # Generar imagen con DALL-E
+            generar_imagen_button = st.button('Generar imagen')
+
+            if generar_imagen_button and api_key:
+                prompt = f'Un producto para un E-Commerce de categoría {categoria_selector} con la descripción: {descripcion_producto}'
+                image_url = generate_image(prompt, API_KEY=api_key)
+                st.image(image_url, caption='Imagen generada por DALL-E', width=512)
+            
+            else:
+                st.write('Por favor, introduce tu API Key de OpenAI para poder generar imágenes con DALL-E.')
+        
+        else:
+            st.write('Introduce una descripción del producto que quieres generar.')
+
+            descripcion_producto = st.text_input('Descripción del producto')
+
+            st.write('Descripción del producto:', descripcion_producto)
+
+            # Generar imagen con DALL-E
+
+            generar_imagen_button = st.button('Generar imagen')
+
+            if generar_imagen_button and api_key:
+                prompt = f'Una imagen de un producto para un E-Commerce{descripcion_producto}'
+                image_url = generate_image(prompt, API_KEY= api_key)
+                st.image(image_url, caption='Imagen generada por DALL-E', width=512)
+            
+            else:
+                st.write('Por favor, introduce tu API Key de OpenAI para poder generar imágenes con DALL-E.')
+    
+    else:
+        if api_key:
+            descripcion_transcription = transcribe_audio(API_KEY=api_key)
+            if descripcion_transcription:
+                image_url = generate_image(prompt = descripcion_transcription, API_KEY=api_key)
+                st.image(image_url, caption=descripcion_transcription, width=512)
+
+def rag():
+    st.header('Respondiendo preguntas sobre productos.')
+    st.write('Vamos a agregar una última funcionalidad a nuestra plataforma de E-commerce, es la capacidad de responder \
+              a quienes quieran agregar nuevos artículos, cual es el formato correcto para agregar dichos artículos. Para ello vamos a utilizar \
+              un modelo de (Retrieval Augmented Generation) RAG, que es un modelo de lenguaje que combina recuperación de información \
+              de fuentes externas y generación de lenguaje natural para responder preguntas. De este modo, le \
+              damos información adicional a nuestra red neuronal generativa para que pueda responder preguntas sobre las,\
+             formas correca de agregar productos a la plataforma para segurar un buen engagement.\
+             En resumen, si alguien quiere publicar un nuevo producto y quiere saber cómo hacerlo correctamente,\
+             en vez de necesitar a algún miembro de nuestro staff que le de soporte, puede preguntarle a nuestro chatbot.')
+    
+    st.image('img/data_science_27.png', caption='Chatbot inteligente.')
+
+
+
+
+    
 
