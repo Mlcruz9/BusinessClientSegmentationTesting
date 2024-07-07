@@ -1,14 +1,7 @@
 
 from pickle import TRUE
 import streamlit as st
-from plotly.offline import init_notebook_mode, iplot, plot
 import plotly.express as px
-import plotly as py
-init_notebook_mode(connected=True)
-import plotly.graph_objs as go
-import matplotlib.pyplot as plt
-import statsmodels.api as sm
-import seaborn as sns
 import pandas as pd
 import numpy as np
 import plotly.express as px
@@ -27,6 +20,8 @@ df_cluster_scaled = pd.read_csv('datasets/Data_Reducida_Final_Cluster_Scaled.csv
 cluster_4 = pd.read_csv('datasets/Cluster_4.csv')
 kmeans_4 = pickle.load(open('models/kmeans.pkl', 'rb'))
 scaler_final = pickle.load(open('models/scaler.pkl', 'rb'))
+app = st.session_state
+chatbot = ChatBotAI(app=app)
 
 
 
@@ -145,7 +140,7 @@ def eda():
 
     st.write('Vamos a analizar la correlación entre las variables de nuestro dataset para entender mejor las relaciones entre ellas.')
     
-    cmap = px.imshow(df.drop(columns=['Cluster', 'Latitud', 'Longitud']).corr().round(2), color_continuous_scale='Cividis', title='Mapa de correlación', text_auto=True)
+    cmap = px.imshow(df.drop(columns=['Cluster', 'Latitud', 'Longitud']).corr(numeric_only=True).round(2), color_continuous_scale='Cividis', title='Mapa de correlación', text_auto=True)
 
     st.plotly_chart(cmap)
 
@@ -763,6 +758,9 @@ def generativas(api_key):
             if descripcion_transcription:
                 image_url = generate_image(prompt = descripcion_transcription, API_KEY=api_key)
                 st.image(image_url, caption=descripcion_transcription, width=512)
+            
+        else:
+            st.write('Por favor, introduce tu API Key de OpenAI para poder generar imágenes con DALL-E.')
 
 def rag():
     st.header('Respondiendo preguntas sobre productos.')
@@ -776,6 +774,33 @@ def rag():
              en vez de necesitar a algún miembro de nuestro staff que le de soporte, puede preguntarle a nuestro chatbot.')
     
     st.image('img/data_science_27.png', caption='Chatbot inteligente.')
+
+    st.header('¡Hi! ¡I\'m your bot assistant for your E-Commerce Journey!')
+
+    if "messages" not in app:
+        app["messages"] = [{"role":"assistant", "content":'¿How may I help you?🤖'}]
+
+    if 'full_response' not in app:
+        app['full_response'] = '' 
+
+    for msg in app["messages"]:
+        if msg["role"] == "user":
+            st.chat_message(msg["role"], avatar="😎").write(msg["content"])
+        elif msg["role"] == "assistant":
+            st.chat_message(msg["role"], avatar="👾").write(msg["content"])
+    
+    ## Chat
+    if txt := st.chat_input():
+        ### User writes
+        app["messages"].append({"role":"user", "content":txt})
+        st.chat_message("user", avatar="😎").write(txt)
+
+        ### AI responds with chat stream
+        app["full_response"] = ""
+        st.chat_message("assistant", avatar="👾").write(chatbot.respond(app["messages"]))
+        app["messages"].append({"role":"assistant", "content":app["full_response"]})
+
+
 
 
 

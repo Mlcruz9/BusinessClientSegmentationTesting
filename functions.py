@@ -2,6 +2,8 @@ import requests
 import time
 import streamlit as st
 from audio_recorder_streamlit import audio_recorder
+import chromadb
+import ollama
 
 def generate_image(prompt, API_KEY):
     headers = {
@@ -69,3 +71,32 @@ def transcribe_audio(API_KEY):
                 return transcription['text']
         else:
             st.warning('Audio captured incorrectly, please try again.')
+
+
+class ChatBotAI():
+    def __init__(self, app):
+        db = chromadb.PersistentClient()
+        self.collection = db.get_or_create_collection("Amazon_Styleguide")
+        self.app = app
+
+    def query(self, q, top=10):
+        res_db = self.collection.query(query_texts=[q])["documents"][0][0:top]
+        context = ' '.join(res_db).replace("\n", " ")
+        return context
+
+    def respond(self, lst_messages, model="phi3", use_knowledge=False):
+        q = lst_messages[-1]["content"]
+        context = self.query(q)
+        # st.write(context)
+        if use_knowledge:
+            prompt = "Give the most accurate answer using your knowledge and the folling additional information: \n"+context
+        else:
+            prompt = "Give the most accurate answer using only the folling information: \n"+context
+
+        res_ai = ollama.chat(model=model, 
+                                messages=[{"role":"system", "content":prompt}]+lst_messages,
+                                stream=True)
+        for res in res_ai:
+            chunk = res["message"]["content"]
+            self.app["full_response"] += chunk
+            yield chunk
