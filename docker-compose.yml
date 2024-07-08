@@ -3,7 +3,6 @@ version: '3.8'
 services:
   streamlit-app:
     build: .
-    volumes:
     networks:
       - proxy
     environment:
