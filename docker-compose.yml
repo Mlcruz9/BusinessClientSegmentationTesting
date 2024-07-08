@@ -6,7 +6,7 @@ services:
     networks:
       - proxy
     environment:
-      VIRTUAL_HOST: clusteringgenai.miguellacruz.es
+      VIRTUAL_HOST: clusteringgenai.miguellacruz.es, www.clusteringgenai.miguellacruz.es
       LETSENCRYPT_HOST: clusteringgenai.miguellacruz.es, www.clusteringgenai.miguellacruz.es
       LETSENCRYPT_EMAIL: mislap87@gmail.com
 
