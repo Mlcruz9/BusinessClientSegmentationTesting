@@ -1,7 +1,7 @@
 
 import streamlit as st
 import pandas as pd
-from functions_streamlit import eda, clustering, generativas, rag
+from utils.functions_streamlit import eda, clustering, generativas, rag
 # Creamos la configuración de la página, y el título
 st.set_page_config(page_title='Clustering y generativas', layout='wide', page_icon="🌐")
 

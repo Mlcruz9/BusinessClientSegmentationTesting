@@ -1,0 +1,17 @@
+version: '3.8'
+
+services:
+  streamlit-app:
+    build: .
+    volumes:
+    networks:
+      - proxy
+    environment:
+      VIRTUAL_HOST: clusteringgenai.miguellacruz.es
+      LETSENCRYPT_HOST: clusteringgenai.miguellacruz.es, www.clusteringgenai.miguellacruz.es
+      LETSENCRYPT_EMAIL: mislap87@gmail.com
+
+networks:
+  proxy:
+    name: nginx-proxy
+    external: true
