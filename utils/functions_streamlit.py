@@ -772,6 +772,10 @@ def rag():
              formas correca de agregar productos a la plataforma para segurar un buen engagement.\
              En resumen, si alguien quiere publicar un nuevo producto y quiere saber cómo hacerlo correctamente,\
              en vez de necesitar a algún miembro de nuestro staff que le de soporte, puede preguntarle a nuestro chatbot.')
+
+    st.warning('⚠️ Esta funcionalidad de RAG no está operativa en este momento. El servidor no cuenta con RAM suficiente para correr Ollama de manera estable.')
+    st.caption('Puedes mirar la implementación en el repositorio de GitHub: https://github.com/Mlcruz9/BusinessClientSegmentationTesting')
+    return
     
     st.image('img/data_science_27.png', caption='Chatbot inteligente.')
 
@@ -806,4 +810,3 @@ def rag():
 
 
     
-

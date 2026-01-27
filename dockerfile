@@ -34,8 +34,6 @@ COPY . /app
 # Install any needed packages specified in requirements.txt
 RUN pip install --no-cache-dir -r requirements.txt
 
-# Install ollama using their provided script
-RUN curl -fsSL https://ollama.com/install.sh | sh
 
 # Make port 8501 available to the world outside this container
 EXPOSE 8501
@@ -44,4 +42,4 @@ EXPOSE 8501
 ENV NAME World
 
 # Command to run ollama and streamlit
-CMD ollama serve & sleep 10 && ollama run phi3 && streamlit run main.py
+CMD streamlit run main.py
